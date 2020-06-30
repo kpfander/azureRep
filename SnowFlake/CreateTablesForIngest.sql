@@ -26,18 +26,22 @@ FROM @AZURE_KP/climate.json file_format = JSON;
 CREATE OR REPLACE TABLE CITY (id INT, NAME VARCHAR(50), country VARCHAR(2));
 CREATE OR REPLACE TABLE GEOGRAPHY(city_id INT, lon FLOAT, lat FLOAT);
 
-
+-- population
 create or replace table city_population  
 (	
 	Country string,
   	City string,
   	AccentCity string,
-  	Region integer,
-  	Population float,
+  	Region string,
+  	Population string,
   	latitude float,
   	longitude float
 );
- 
+CREATE OR REPLACE STREAM my_population ON TABLE city_population;
+COPY INTO city_population
+FROM @AZURE_KP/worldcitiespop3.csv file_format =  CSV;
+
+--temperature
 create or replace table city_temp  
 (	
 	Region string,
@@ -49,12 +53,12 @@ create or replace table city_temp
 	YEAR integer,
 	AvgTemperature float	
 );
+CREATE OR REPLACE STREAM my_city_temp ON TABLE city_temp;
 
-COPY INTO city_population
-FROM @AZURE_KP/2015_3689_compressed_worldcitiespop.csv.zip file_format =  CSV2;
 
 COPY INTO city_temp
-FROM @AZURE_KP/694560_1215964_compressed_city_temperature.csv.zip file_format =  CSV2;
+FROM @AZURE_KP/city_temperature file_format =  CSV;
+
 
 Select *, 
 FROM "CITYBIKE"."PUBLIC"."JSON_CITY_INGEST" limit 100
