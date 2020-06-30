@@ -3,10 +3,22 @@
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText1",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
 			"sinks": [],
-			"transformations": [],
-			"script": ""
+			"transformations": [
+				{
+					"name": "ConditionalSplit1"
+				}
+			],
+			"script": "source(output(\n\t\tRegion as string,\n\t\tCountry as string,\n\t\tState as string,\n\t\tCity as string,\n\t\tMonth as integer '000',\n\t\tDay as integer '000',\n\t\tYear as integer '000',\n\t\tAvgTemperature as float '000.##'\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 100,\n\tfileList: true,\n\tskipLines: 1) ~> source1\nsource1 split(Country=='Algeria',\n\tdisjoint: false) ~> ConditionalSplit1@(Algeria, Other)"
 		}
 	}
 }
