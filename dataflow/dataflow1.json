@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "DelimitedText1",
+						"referenceName": "CityTemperature",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
@@ -16,9 +16,12 @@
 			"transformations": [
 				{
 					"name": "ConditionalSplit1"
+				},
+				{
+					"name": "Select1"
 				}
 			],
-			"script": "source(output(\n\t\tRegion as string,\n\t\tCountry as string,\n\t\tState as string,\n\t\tCity as string,\n\t\tMonth as integer '000',\n\t\tDay as integer '000',\n\t\tYear as integer '000',\n\t\tAvgTemperature as float '000.##'\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 0,\n\tskipLines: 1,\n\twildcardPaths:['city_temperature*']) ~> source1\nsource1 split(Country=='Algeria',\n\tdisjoint: false) ~> ConditionalSplit1@(Algeria, Other)"
+			"script": "source(output(\n\t\tRegion as string,\n\t\tCountry as string,\n\t\tState as string,\n\t\tCity as string,\n\t\tMonth as integer '000',\n\t\tDay as integer '000',\n\t\tYear as integer '000',\n\t\tAvgTemperature as float '000.##'\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 0,\n\tskipLines: 1,\n\twildcardPaths:['city_temperature*']) ~> source1\nsource1 split(Country==\"Algeria\",\n\tdisjoint: false) ~> ConditionalSplit1@(Algeria, Other)\nConditionalSplit1@Algeria select(mapColumn(\n\t\tRegion,\n\t\tCountry,\n\t\tState,\n\t\tCity,\n\t\tMonth,\n\t\tDay,\n\t\tYear,\n\t\tAvgTemperature\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1"
 		}
 	}
 }

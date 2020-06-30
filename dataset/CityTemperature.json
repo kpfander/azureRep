@@ -1,5 +1,5 @@
 {
-	"name": "DelimitedText1",
+	"name": "CityTemperature",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "AzureBlobStorage1",
