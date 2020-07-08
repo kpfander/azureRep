@@ -1,0 +1,39 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "CityTemperature",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"linkedService": {
+						"referenceName": "AzureDataLakeStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"schemaLinkedService": {
+						"referenceName": "AzureDataLakeStorage1",
+						"type": "LinkedServiceReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "ConditionalSplit1"
+				},
+				{
+					"name": "SelectRegionCountryStateCity"
+				}
+			],
+			"script": "source(output(\n\t\tRegion as string,\n\t\tCountry as string,\n\t\tState as string,\n\t\tCity as string,\n\t\tMonth as integer '000',\n\t\tDay as integer '000',\n\t\tYear as integer '000',\n\t\tAvgTemperature as float '000.##'\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tlimit: 0,\n\tskipLines: 1,\n\twildcardPaths:['city_temperature*']) ~> source1\nsource1 split(Country==\"Algeria\",\n\tdisjoint: false) ~> ConditionalSplit1@(Algeria, Other)\nConditionalSplit1@Algeria select(mapColumn(\n\t\tRegion,\n\t\tCountry,\n\t\tState,\n\t\tCity,\n\t\tMonth,\n\t\tDay,\n\t\tYear,\n\t\tAvgTemperature\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectRegionCountryStateCity\nSelectRegionCountryStateCity sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tentity: 'test',\n\tformat: 'cdm',\n\tcorpusPath: 'temperature_input',\n\tfolderPath: 'kpblob',\n\tfileSystem: 'kpblo',\n\tcolumnDelimiter: ',',\n\tcolumnNamesAsHeader: false,\n\tcorpusStore: 'adlsgen2',\n\tadlsgen2_fileSystem: 'city',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+		}
+	}
+}
