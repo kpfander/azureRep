@@ -60,5 +60,5 @@ COPY INTO city_temp
 FROM @AZURE_KP/city_temperature file_format =  CSV;
 
 
-Select *, 
-FROM "CITYBIKE"."PUBLIC"."JSON_CITY_INGEST" limit 100
+Select * 
+FROM "CITYBIKE"."PUBLIC"."JSON_CITY_INGEST" limit 100;
