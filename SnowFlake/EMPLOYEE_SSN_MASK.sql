@@ -37,7 +37,7 @@ create or replace view PUBLIC.EMPLOYEE_VIEW as
     from
         PUBLIC.EMPLOYEE PE;
 select * from PUBLIC.EMPLOYEE_VIEW;
-//Create masking policy and apply it to SSN column in PUBLIC.EMPLOYEE table:
+--Create masking policy and apply it to SSN column in PUBLIC.EMPLOYEE table:
 create or replace masking policy EMPLOYEE_SSN_MASK as (val string) returns string ->
   case
     when CURRENT_ROLE() in ('ACCOUNTADMIN') then val
